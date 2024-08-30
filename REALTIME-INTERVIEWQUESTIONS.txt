@@ -1,0 +1,98 @@
+You need to deploy a highly available web application in AWS. How would you design the architecture?
+
+Answer: I would design the architecture using multiple availability zones within a region. The web servers would be deployed in an Auto Scaling group across at least two availability zones for high availability. An Elastic Load Balancer (ELB) would distribute traffic across the instances. For the database, I would use Amazon RDS with Multi-AZ deployment for high availability and automated failover. I would also use Amazon S3 for static content and CloudFront for content delivery.
+
+Your application needs to handle a sudden increase in traffic during a specific event. How would you ensure the application scales to meet the demand?
+
+Answer: I would use Auto Scaling to automatically add or remove EC2 instances based on predefined metrics (e.g., CPU utilization). I would set up CloudWatch alarms to trigger scaling actions. Additionally, I would ensure that the database tier can scale by using read replicas for RDS and enabling ElastiCache for caching frequently accessed data.
+
+A critical EC2 instance has crashed. What steps would you take to troubleshoot and recover it?
+
+Answer: I would first check the CloudWatch metrics and logs to identify the issue (e.g., high CPU usage, memory leaks). I would also check the instance status checks in the EC2 console. If the instance cannot be recovered, I would terminate it and launch a new instance from the latest AMI backup. Additionally, I would ensure that Auto Scaling is in place to automatically replace unhealthy instances.
+
+How would you implement a disaster recovery plan for your application in AWS?
+
+Answer: I would implement a disaster recovery plan by:
+Using Multi-AZ deployments for databases.
+Regularly backing up data to S3 and using S3 Cross-Region Replication to replicate data to another region.
+Setting up a secondary environment in a different region with the same infrastructure using CloudFormation or Terraform templates.
+Implementing Route 53 with health checks and DNS failover to redirect traffic to the secondary region in case of a disaster.
+Testing the disaster recovery plan regularly to ensure its effectiveness.
+
+Your application needs to process and analyze real-time streaming data. Which AWS services would you use and how?
+
+Answer: I would use Amazon Kinesis Data Streams or Amazon MSK (Managed Streaming for Apache Kafka) to ingest and process streaming data. For real-time processing, I would use AWS Lambda or Amazon Kinesis Data Analytics. Processed data can be stored in Amazon S3, RDS, or DynamoDB for further analysis and reporting. For visualization, I could use Amazon QuickSight or integrate with third-party tools.
+
+You need to migrate an on-premises application to AWS with minimal downtime. What is your approach?
+
+Answer: I would start by thoroughly assessing the current infrastructure and application dependencies. I would then:
+Use AWS Migration Hub to track the progress.
+Utilize AWS Server Migration Service (SMS) or AWS Database Migration Service (DMS) for the migration.
+Implement a hybrid architecture temporarily, where both on-premises and AWS environments run simultaneously.
+Use Route 53 to gradually switch DNS routing to the AWS environment.
+Continuously monitor the new environment for any issues and perform data synchronization until the final cutover.
+Finally, decommission the on-premises environment after a successful migration and validation.
+
+How do you ensure that your infrastructure as code (IaC) is deployed consistently across multiple environments (development, staging, production)?
+
+Answer: I would use AWS CloudFormation or Terraform to define and manage infrastructure as code. I would maintain separate configuration files or parameters for each environment (development, staging, production). Using a CI/CD pipeline (e.g., AWS CodePipeline, Jenkins), I would automate the deployment process, ensuring consistent and repeatable deployments. Additionally, I would use version control (e.g., Git) to manage changes to the IaC templates and implement code reviews and automated testing to catch errors before deployment.
+
+A security vulnerability has been identified in one of the AMIs you are using. How do you address this issue?
+
+Answer: I would first identify all instances using the affected AMI. I would then create a new AMI with the necessary security patches and updates. Next, I would update the Auto Scaling groups and launch configurations to use the new AMI. For existing instances, I would perform a rolling update by gradually replacing them with instances launched from the new AMI, ensuring minimal disruption to the application. Additionally, I would review and update the security policies and practices to prevent future vulnerabilities.
+
+Your application experiences latency issues. How would you diagnose and resolve them?
+
+Answer: I would start by monitoring and analyzing the CloudWatch metrics for EC2 instances, RDS, and other relevant services to identify any resource bottlenecks. I would also review application logs for errors and performance issues. Using AWS X-Ray, I would trace and analyze request paths to pinpoint the source of latency. Potential resolutions might include optimizing the application code, increasing instance sizes, adding more instances to the Auto Scaling group, optimizing database queries, and using caching solutions like ElastiCache.
+
+How do you handle secret management in your AWS environment?
+
+Answer: I would use AWS Secrets Manager or AWS Systems Manager Parameter Store to securely manage and store secrets such as database credentials, API keys, and other sensitive information. Both services offer encryption at rest using AWS KMS and fine-grained access control using IAM policies. I would rotate secrets regularly and use environment variables or IAM roles to inject secrets into applications at runtime, minimizing the risk of exposure.
+
+Your application needs to ensure compliance with data residency requirements by keeping data within specific geographical regions. How do you achieve this in AWS?
+
+Answer: I would use AWS regions and Availability Zones to ensure that data is stored and processed within the required geographical boundaries. I would choose the appropriate AWS region(s) that comply with data residency requirements and configure services like S3, RDS, and EC2 to operate within those regions. I would also leverage S3 bucket policies, IAM policies, and AWS Config rules to enforce compliance and monitor data residency.
+
+How would you implement a multi-region failover solution for a critical application in AWS?
+
+Answer: I would set up my application in multiple AWS regions with identical infrastructure using services like CloudFormation or Terraform. I would use Route 53 with latency-based or failover routing policies to route traffic to the primary region and automatically switch to the secondary region in case of failure. Data synchronization between regions can be achieved using services like RDS with read replicas in different regions, DynamoDB Global Tables, and S3 Cross-Region Replication. Regularly test the failover process to ensure readiness.
+
+A client reports that they are receiving HTTP 5xx errors frequently. How would you troubleshoot and resolve this issue?
+
+Answer: I would start by checking the CloudWatch metrics and ELB logs to identify the source of the 5xx errors. Common sources could be application server errors, resource limitations, or misconfigurations. I would also review application logs for stack traces and error messages. Once identified, I would address the root cause by scaling up resources, fixing application bugs, optimizing configurations, or implementing proper exception handling. Additionally, setting up CloudWatch Alarms for 5xx error thresholds can help in proactive monitoring and response.
+
+Describe how you would handle a DDoS attack on your AWS-hosted application.
+
+Answer: I would leverage AWS Shield, a managed DDoS protection service, to protect my application from DDoS attacks. AWS Shield Standard is automatically available, and for enhanced protection, I would subscribe to AWS Shield Advanced. I would also use AWS WAF to create rules that filter malicious traffic and CloudFront to distribute and protect content at edge locations. Configuring Auto Scaling to handle sudden spikes in traffic and using VPC security groups and NACLs to limit unwanted traffic would also be part of my strategy.
+
+How do you manage and automate OS patching for your EC2 instances?
+
+Answer: I would use AWS Systems Manager Patch Manager to automate the process of patching operating systems on my EC2 instances. I would create patch baselines, define maintenance windows, and schedule patching operations. Systems Manager Agent (SSM Agent) needs to be installed on the instances, and IAM roles should be configured to grant necessary permissions. Regular patch compliance reports from Systems Manager can help in ensuring that all instances are up-to-date.
+
+Your application requires a managed, scalable NoSQL database. Which AWS service would you choose and why?
+
+Answer: I would choose Amazon DynamoDB as it is a fully managed, scalable NoSQL database service that provides fast and predictable performance with seamless scalability. It supports key-value and document data models, offers built-in security, backup and restore, and in-memory caching with DynamoDB Accelerator (DAX). DynamoDB’s global tables feature also enables multi-region, fully replicated databases for high availability and disaster recovery.
+
+How would you monitor and optimize the cost of your AWS resources?
+
+Answer: I would use AWS Cost Explorer and AWS Budgets to monitor and analyze spending patterns. Setting up cost allocation tags can help in tracking costs by project, department, or application. I would regularly review AWS Trusted Advisor recommendations for cost optimization, including identifying underutilized resources, rightsizing instances, and using Reserved Instances or Savings Plans. Additionally, I would set up CloudWatch billing alarms to notify when spending exceeds predefined thresholds.
+
+You need to deploy a microservices-based application using containers. Which AWS services would you use and how would you deploy it?
+
+Answer: I would use Amazon ECS (Elastic Container Service) or Amazon EKS (Elastic Kubernetes Service) to deploy the containerized microservices. For ECS, I would define task definitions and use Fargate or EC2 launch types for running containers. For EKS, I would set up a Kubernetes cluster and deploy microservices using Kubernetes manifests (e.g., Deployment, Service). Additionally, I would use AWS App Mesh for service mesh and service discovery, and configure CI/CD pipelines with AWS CodePipeline and CodeBuild for automated deployment.
+
+Explain how you would implement a CI/CD pipeline in AWS for a serverless application.
+
+Answer: For a serverless application, I would use AWS CodePipeline to orchestrate the CI/CD process. The pipeline would include stages such as source (integrating with CodeCommit, GitHub, or Bitbucket), build (using CodeBuild to compile and test the code), and deploy (using AWS Lambda or Serverless Framework to deploy functions). AWS SAM (Serverless Application Model) or the Serverless Framework can be used to define and deploy serverless resources. CloudFormation or SAM templates would handle the infrastructure as code. Finally, CodePipeline would trigger deployments based on code changes, ensuring continuous integration and deployment.
+
+How do you implement security best practices for an RDS database?
+
+Answer: Security best practices for RDS include:
+Enabling encryption at rest using AWS KMS.
+Enabling encryption in transit using SSL/TLS.
+Configuring RDS instances to be in private subnets with no direct internet access.
+Using IAM roles and policies to control access to RDS instances.
+Enabling automated backups and snapshots.
+Regularly applying security patches and updates.
+Enabling Multi-AZ deployments for high availability and failover.
+Using security groups to control inbound and outbound traffic.
